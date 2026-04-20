@@ -77,7 +77,7 @@ export default function HomePage() {
           <div className="section-container relative z-10 text-center">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber/30 bg-amber-muted text-amber text-sm font-medium mb-8 animate-fade-rise">
               <span className="w-1.5 h-1.5 rounded-full bg-amber animate-pulse-glow" />
-              Powered by Google Gemini AI
+              Powered by Groq AI
             </div>
 
             <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-tight mb-6 animate-fade-rise delay-100">

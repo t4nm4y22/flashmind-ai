@@ -59,7 +59,7 @@ export default function Navbar() {
         </ul>
 
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/login" className="btn-ghost text-sm py-2 px-5">Log in</Link>
+          {/* <Link href="/login" className="btn-ghost text-sm py-2 px-5">Log In</Link> */}
           <Link href="/generate" className="btn-primary text-sm py-2 px-5">Try for Free →</Link>
         </div>
 
@@ -87,7 +87,7 @@ export default function Navbar() {
             ))}
           </ul>
           <div className="flex flex-col gap-3">
-            <Link href="/login" className="btn-ghost text-center" onClick={() => setIsMenuOpen(false)}>Log in</Link>
+            {/* <Link href="/login" className="btn-ghost text-center" onClick={() => setIsMenuOpen(false)}>Log In</Link> */}
             <Link href="/generate" className="btn-primary text-center" onClick={() => setIsMenuOpen(false)}>Try for Free →</Link>
           </div>
         </div>

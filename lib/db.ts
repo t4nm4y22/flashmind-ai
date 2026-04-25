@@ -1,11 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? 'placeholder';
+let supabaseInstance: SupabaseClient | null = null;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getSupabase(): SupabaseClient {
+  if (!supabaseInstance) {
+    supabaseInstance = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+  }
+  return supabaseInstance;
+}
 
-// Database types
 export interface Deck {
   id: string;
   created_at: string;
@@ -24,19 +30,14 @@ export interface Flashcard {
   order: number | null;
 }
 
-// Save a new deck with flashcards
 export async function saveDeck(
   title: string,
   description: string,
   flashcards: { front: string; back: string }[]
 ) {
-  const { data: deck, error: deckError } = await supabase
+  const { data: deck, error: deckError } = await getSupabase()
     .from('decks')
-    .insert({
-      title,
-      description,
-      card_count: flashcards.length,
-    })
+    .insert({ title, description, card_count: flashcards.length })
     .select()
     .single();
 
@@ -49,30 +50,26 @@ export async function saveDeck(
     order: index,
   }));
 
-  const { error: cardsError } = await supabase
+  const { error: cardsError } = await getSupabase()
     .from('flashcards')
     .insert(flashcardsToInsert);
 
   if (cardsError) throw cardsError;
-
   return deck;
 }
 
-// Get all decks
 export async function getDecks() {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('decks')
     .select('*')
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-
   return data as Deck[];
 }
 
-// Get a single deck with its flashcards
 export async function getDeck(deckId: string) {
-  const { data: deck, error: deckError } = await supabase
+  const { data: deck, error: deckError } = await getSupabase()
     .from('decks')
     .select('*')
     .eq('id', deckId)
@@ -80,13 +77,12 @@ export async function getDeck(deckId: string) {
 
   if (deckError) throw deckError;
 
-  const { data: flashcards, error: cardsError } = await supabase
+  const { data: flashcards, error: cardsError } = await getSupabase()
     .from('flashcards')
     .select('*')
     .eq('deck_id', deckId)
     .order('order', { ascending: true });
 
   if (cardsError) throw cardsError;
-
   return { deck: deck as Deck, flashcards: flashcards as Flashcard[] };
 }

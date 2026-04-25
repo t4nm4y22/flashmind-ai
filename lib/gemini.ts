@@ -33,6 +33,12 @@ export async function generateFlashcards(
     });
 
     const data = await res.json();
+
+    if (!res.ok) {
+      console.error('Groq error:', JSON.stringify(data));
+      return { success: false, error: "Generation failed." };
+    }
+
     const content = data.choices[0].message.content;
     const cleaned = content.replace(/```json|```/g, "").trim();
     const cards: Flashcard[] = JSON.parse(cleaned);

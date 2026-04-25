@@ -1,6 +1,6 @@
 "use client";
 
-import { saveDeck , getDecks } from '@/lib/db';
+import { saveDeck, getDecks } from '@/lib/db';
 import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
@@ -19,29 +19,28 @@ export default function GeneratePage() {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
   const handleSaveDeck = async () => {
-  if (!cards || cards.length === 0) {
-    alert('No flashcards to save!');
-    return;
+    if (!cards || cards.length === 0) {
+      alert('No flashcards to save!');
+      return;
     }
 
-  // Check freemium limit
-  const existingDecks = await getDecks();
-  if (existingDecks && existingDecks.length >= 3) {
-    alert('🔒 You\'ve reached the free limit of 3 decks!\n\nSupport us on Ko-fi to unlock unlimited decks!');
-    return;
+    const existingDecks = await getDecks();
+    if (existingDecks && existingDecks.length >= 3) {
+      alert('🔒 You\'ve reached the free limit of 3 decks!\n\nSupport us on Ko-fi to unlock unlimited decks!');
+      return;
     }
 
-  const deckTitle = prompt('Enter a title for this deck:');
-  if (!deckTitle) return;
+    const deckTitle = prompt('Enter a title for this deck:');
+    if (!deckTitle) return;
 
-  const deckDescription = prompt('Enter a description (optional):') || '';
+    const deckDescription = prompt('Enter a description (optional):') || '';
 
-  try {
-    await saveDeck(deckTitle, deckDescription, cards);
-    alert('Deck saved successfully! ✅');
+    try {
+      await saveDeck(deckTitle, deckDescription, cards);
+      alert('Deck saved successfully! ✅');
     } catch (error) {
-    console.error('Error saving deck:', error);
-    alert('Failed to save deck. Please try again.');
+      console.error('Error saving deck:', error);
+      alert('Failed to save deck. Please try again.');
     }
   };
 
@@ -67,7 +66,7 @@ export default function GeneratePage() {
       if (data.success && data.cards) {
         setCards(data.cards);
         setCurrentCardIndex(0);
-        setInputText(""); // Clear input after success
+        setInputText("");
       } else {
         setError(data.error || "Failed to generate flashcards. Please try again.");
       }
@@ -94,11 +93,9 @@ export default function GeneratePage() {
   return (
     <>
       <Navbar />
-
       <main className="min-h-screen pt-24 pb-16">
         <div className="section-container max-w-4xl">
-          
-          {/* Header */}
+
           <div className="text-center mb-12">
             <h1 className="font-serif text-4xl md:text-5xl text-cream mb-4">
               Generate Your <span className="text-gradient">Flashcards</span>
@@ -108,7 +105,6 @@ export default function GeneratePage() {
             </p>
           </div>
 
-          {/* Input Section - Only show if no cards generated */}
           {cards.length === 0 && (
             <div className="glass-card p-8 mb-8">
               <label htmlFor="study-text" className="block text-cream text-sm font-medium mb-3">
@@ -118,11 +114,11 @@ export default function GeneratePage() {
                 id="study-text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Paste lecture notes, textbook excerpts, Wikipedia articles, or any study material here...&#10;&#10;Example: The OSI model is a conceptual framework used to standardize the functions of a telecommunication or computing system..."
+                placeholder="Paste lecture notes, textbook excerpts, Wikipedia articles, or any study material here..."
                 className="w-full h-64 bg-midnight-light border border-border rounded-lg px-4 py-3 text-cream placeholder:text-cream-subtle focus:outline-none focus:border-amber resize-none"
                 disabled={isGenerating}
               />
-              
+
               <div className="flex items-center justify-between mt-4">
                 <p className="text-cream-subtle text-sm">
                   {inputText.length} characters {inputText.length >= 100 ? "✓" : "(minimum 100)"}
@@ -151,31 +147,32 @@ export default function GeneratePage() {
 
               <div className="mt-6 p-4 bg-amber-muted border border-amber/20 rounded-lg">
                 <p className="text-amber text-sm">
-                  <strong>💡 Pro tip:</strong> Paste at least a full paragraph for best results. The AI works better with more context!
+                  <strong>Pro tip:</strong> Paste at least a full paragraph for best results. The AI works better with more context!
                 </p>
               </div>
             </div>
           )}
 
-          {/* Flashcard Display Section */}
           {cards.length > 0 && (
             <div>
-              {/* Success message */}
               <div className="mb-8 p-4 bg-success/10 border border-success/30 rounded-lg">
                 <p className="text-success text-sm text-center">
-                  ✓ Generated {cards.length} flashcards! Click the card to flip it.
+                  Generated {cards.length} flashcards! Click the card to flip it.
                 </p>
               </div>
-              
-              {/* Save Deck Button */}
-              <button
-                onClick={handleSaveDeck}
-                className="btn-primary mb-6 w-full sm:w-auto"
-              >
-                💾 Save This Deck
-              </button>
 
-              {/* Card display */}
+              <div className="flex gap-4 mb-6">
+                <button
+                  onClick={handleSaveDeck}
+                  className="btn-primary px-8 py-3"
+                >
+                  Save Deck
+                </button>
+                <Link href="/decks" className="btn-ghost px-8 py-3">
+                  View My Decks
+                </Link>
+              </div>
+
               <div className="mb-8">
                 <FlashCard
                   front={cards[currentCardIndex].front}
@@ -185,30 +182,26 @@ export default function GeneratePage() {
                 />
               </div>
 
-              {/* Navigation */}
               <div className="flex items-center justify-between mb-8">
                 <button
                   onClick={handlePrevious}
                   disabled={currentCardIndex === 0}
                   className="btn-ghost px-6 py-3 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                  ← Previous
+                  Previous
                 </button>
-
                 <p className="text-cream-muted text-sm">
                   Card {currentCardIndex + 1} of {cards.length}
                 </p>
-
                 <button
                   onClick={handleNext}
                   disabled={currentCardIndex === cards.length - 1}
                   className="btn-ghost px-6 py-3 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                  Next →
+                  Next
                 </button>
               </div>
 
-              {/* Progress dots */}
               <div className="flex items-center justify-center gap-2 mb-8">
                 {cards.map((_, index) => (
                   <button
@@ -224,8 +217,7 @@ export default function GeneratePage() {
                 ))}
               </div>
 
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex justify-center">
                 <button
                   onClick={() => {
                     setCards([]);
@@ -236,20 +228,13 @@ export default function GeneratePage() {
                 >
                   Generate New Set
                 </button>
-                <button
-                  onClick={() => alert("Save feature coming in Phase 4!")}
-                  className="btn-primary px-8 py-3"
-                >
-                  Save Deck 💾
-                </button>
               </div>
             </div>
           )}
 
-          {/* Back to home link */}
           <div className="text-center mt-12">
             <Link href="/" className="text-cream-muted hover:text-amber transition-colors text-sm">
-              ← Back to home
+              Back to home
             </Link>
           </div>
         </div>

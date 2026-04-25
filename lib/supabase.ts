@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://placeholder.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? 'placeholder';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -30,7 +30,6 @@ export async function saveDeck(
   description: string,
   flashcards: { front: string; back: string }[]
 ) {
-  // 1. Insert deck
   const { data: deck, error: deckError } = await supabase
     .from('decks')
     .insert({
@@ -43,7 +42,6 @@ export async function saveDeck(
 
   if (deckError) throw deckError;
 
-  // 2. Insert flashcards
   const flashcardsToInsert = flashcards.map((card, index) => ({
     deck_id: deck.id,
     front: card.front,
@@ -68,6 +66,7 @@ export async function getDecks() {
     .order('created_at', { ascending: false });
 
   if (error) throw error;
+
   return data as Deck[];
 }
 

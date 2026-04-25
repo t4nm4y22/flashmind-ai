@@ -8,7 +8,7 @@ type Deck = {
   id: string;
   title: string;
   description: string | null;
-  card_count: number;
+  card_count: number | null;
   created_at: string;
 };
 

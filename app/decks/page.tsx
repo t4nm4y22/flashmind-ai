@@ -7,7 +7,7 @@ import Link from 'next/link';
 type Deck = {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   card_count: number;
   created_at: string;
 };

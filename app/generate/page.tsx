@@ -1,5 +1,6 @@
 "use client";
 
+import { saveDeck , getDecks } from '@/lib/supabase';
 import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
@@ -16,6 +17,33 @@ export default function GeneratePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+
+  const handleSaveDeck = async () => {
+  if (!cards || cards.length === 0) {
+    alert('No flashcards to save!');
+    return;
+    }
+
+  // Check freemium limit
+  const existingDecks = await getDecks();
+  if (existingDecks && existingDecks.length >= 3) {
+    alert('🔒 You\'ve reached the free limit of 3 decks!\n\nSupport us on Ko-fi to unlock unlimited decks!');
+    return;
+    }
+
+  const deckTitle = prompt('Enter a title for this deck:');
+  if (!deckTitle) return;
+
+  const deckDescription = prompt('Enter a description (optional):') || '';
+
+  try {
+    await saveDeck(deckTitle, deckDescription, cards);
+    alert('Deck saved successfully! ✅');
+    } catch (error) {
+    console.error('Error saving deck:', error);
+    alert('Failed to save deck. Please try again.');
+    }
+  };
 
   const handleGenerate = async () => {
     if (!inputText.trim()) {
@@ -138,6 +166,14 @@ export default function GeneratePage() {
                   ✓ Generated {cards.length} flashcards! Click the card to flip it.
                 </p>
               </div>
+              
+              {/* Save Deck Button */}
+              <button
+                onClick={handleSaveDeck}
+                className="btn-primary mb-6 w-full sm:w-auto"
+              >
+                💾 Save This Deck
+              </button>
 
               {/* Card display */}
               <div className="mb-8">

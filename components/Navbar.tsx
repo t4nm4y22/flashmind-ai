@@ -60,7 +60,8 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           {/* <Link href="/login" className="btn-ghost text-sm py-2 px-5">Log In</Link> */}
-          <Link href="/generate" className="btn-primary text-sm py-2 px-5">Try for Free →</Link>
+          <Link href="/decks" className="btn-ghost text-sm py-2 px-5">My Decks</Link>
+          <Link href="/generate" className="btn-primary text-sm py-2 px-5">Try for Free +</Link>
         </div>
 
         <button
@@ -88,7 +89,15 @@ export default function Navbar() {
           </ul>
           <div className="flex flex-col gap-3">
             {/* <Link href="/login" className="btn-ghost text-center" onClick={() => setIsMenuOpen(false)}>Log In</Link> */}
-            <Link href="/generate" className="btn-primary text-center" onClick={() => setIsMenuOpen(false)}>Try for Free →</Link>
+            <Link
+              href="/decks"
+              className="btn-ghost text-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              My Decks
+            </Link>
+            <Link href="/generate"
+              className="btn-primary text-center" onClick={() => setIsMenuOpen(false)}>Try for Free →</Link>
           </div>
         </div>
       </div>

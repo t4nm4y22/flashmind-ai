@@ -162,7 +162,7 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {FEATURES.map((feature) => (
                 <div key={feature.title} className="glass-card p-6">
-                  <div className="w-12 h-12 rounded-lg bg-amber-muted border border-amber/20 flex items-center justify-center text-2xl mb-5">
+                  <div className="w-12 h-12 rounded-lg bg-amber-muted/10 flex items-center justify-center text-2xl mb-5">
                     {feature.icon}
                   </div>
                   <h3 className="font-serif text-xl text-cream mb-3">{feature.title}</h3>

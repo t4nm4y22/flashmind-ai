@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getDeck } from '@/lib/supabase';
+import { getDeck } from '@/lib/db';
 import { useParams } from 'next/navigation';
 import FlashCard from '@/components/FlashCard';
 import Link from 'next/link';

@@ -1,6 +1,6 @@
 "use client";
 
-import { saveDeck , getDecks } from '@/lib/supabase';
+import { saveDeck , getDecks } from '@/lib/db';
 import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";

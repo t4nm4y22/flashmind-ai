@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useEffect, useState } from 'react';
-import { getDecks } from '@/lib/supabase';
+import { getDecks } from '@/lib/db';
 import Link from 'next/link';
 
 type Deck = {

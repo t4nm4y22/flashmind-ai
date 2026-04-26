@@ -1,6 +1,6 @@
 "use client";
 
-import { saveDeck, getDecks } from '@/lib/db';
+import { saveDeck, getDecks, getSupabase } from '@/lib/db';
 import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
@@ -26,9 +26,24 @@ export default function GeneratePage() {
     if (!cards || cards.length === 0) return;
 
     const existingDecks = await getDecks();
+
     if (existingDecks && existingDecks.length >= 3) {
-      alert('You have reached the free limit of 3 decks! Support us on Ko-fi to unlock unlimited decks.');
-      return;
+      const email = window.prompt(
+        'You have reached the free limit of 3 decks!\n\nIf you supported us on Ko-fi, enter your Ko-fi email to unlock unlimited decks:\n\nOr visit: ko-fi.com/t4nm4y22'
+      );
+
+      if (!email) return;
+
+      const { data } = await getSupabase()
+        .from('supporters')
+        .select('id')
+        .eq('email', email.trim().toLowerCase())
+        .single();
+
+      if (!data) {
+        alert('Email not found in our supporters list.\n\nPlease support us at ko-fi.com/t4nm4y22 to unlock unlimited decks!');
+        return;
+      }
     }
 
     setShowSaveModal(true);

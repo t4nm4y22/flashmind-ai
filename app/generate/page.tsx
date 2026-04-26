@@ -17,30 +17,37 @@ export default function GeneratePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [deckTitle, setDeckTitle] = useState("");
+  const [deckDescription, setDeckDescription] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSaveDeck = async () => {
-    if (!cards || cards.length === 0) {
-      alert('No flashcards to save!');
-      return;
-    }
+    if (!cards || cards.length === 0) return;
 
     const existingDecks = await getDecks();
     if (existingDecks && existingDecks.length >= 3) {
-      alert('🔒 You\'ve reached the free limit of 3 decks!\n\nSupport us on Ko-fi to unlock unlimited decks!');
+      alert('You have reached the free limit of 3 decks! Support us on Ko-fi to unlock unlimited decks.');
       return;
     }
 
-    const deckTitle = prompt('Enter a title for this deck:');
-    if (!deckTitle) return;
+    setShowSaveModal(true);
+  };
 
-    const deckDescription = prompt('Enter a description (optional):') || '';
-
+  const handleConfirmSave = async () => {
+    if (!deckTitle.trim()) return;
+    setIsSaving(true);
     try {
-      await saveDeck(deckTitle, deckDescription, cards);
-      alert('Deck saved successfully! ✅');
+      await saveDeck(deckTitle.trim(), deckDescription.trim(), cards);
+      setShowSaveModal(false);
+      setDeckTitle("");
+      setDeckDescription("");
+      alert('Deck saved successfully!');
     } catch (error) {
       console.error('Error saving deck:', error);
       alert('Failed to save deck. Please try again.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -49,20 +56,16 @@ export default function GeneratePage() {
       setError("Please paste some text first!");
       return;
     }
-
     setIsGenerating(true);
     setError("");
     setCards([]);
-
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: inputText }),
       });
-
       const data = await response.json();
-
       if (data.success && data.cards) {
         setCards(data.cards);
         setCurrentCardIndex(0);
@@ -79,20 +82,61 @@ export default function GeneratePage() {
   };
 
   const handleNext = () => {
-    if (currentCardIndex < cards.length - 1) {
-      setCurrentCardIndex(currentCardIndex + 1);
-    }
+    if (currentCardIndex < cards.length - 1) setCurrentCardIndex(currentCardIndex + 1);
   };
 
   const handlePrevious = () => {
-    if (currentCardIndex > 0) {
-      setCurrentCardIndex(currentCardIndex - 1);
-    }
+    if (currentCardIndex > 0) setCurrentCardIndex(currentCardIndex - 1);
   };
 
   return (
     <>
       <Navbar />
+
+      {/* Save Modal */}
+      {showSaveModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+          <div className="bg-midnight-light border border-border rounded-xl p-6 w-full max-w-md">
+            <h2 className="text-cream text-xl font-bold mb-4">Save Deck</h2>
+
+            <label className="block text-cream text-sm mb-1">Title *</label>
+            <input
+              type="text"
+              value={deckTitle}
+              onChange={(e) => setDeckTitle(e.target.value)}
+              placeholder="e.g. Biology Chapter 3"
+              className="w-full bg-midnight border border-border rounded-lg px-4 py-2 text-cream placeholder:text-cream-subtle focus:outline-none focus:border-amber mb-4"
+              autoFocus
+            />
+
+            <label className="block text-cream text-sm mb-1">Description (optional)</label>
+            <input
+              type="text"
+              value={deckDescription}
+              onChange={(e) => setDeckDescription(e.target.value)}
+              placeholder="e.g. Covers mitochondria and cellular respiration"
+              className="w-full bg-midnight border border-border rounded-lg px-4 py-2 text-cream placeholder:text-cream-subtle focus:outline-none focus:border-amber mb-6"
+            />
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="btn-ghost px-6 py-2 flex-1"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmSave}
+                disabled={!deckTitle.trim() || isSaving}
+                className="btn-primary px-6 py-2 flex-1 disabled:opacity-50"
+              >
+                {isSaving ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="min-h-screen pt-24 pb-16">
         <div className="section-container max-w-4xl">
 
@@ -118,7 +162,6 @@ export default function GeneratePage() {
                 className="w-full h-64 bg-midnight-light border border-border rounded-lg px-4 py-3 text-cream placeholder:text-cream-subtle focus:outline-none focus:border-amber resize-none"
                 disabled={isGenerating}
               />
-
               <div className="flex items-center justify-between mt-4">
                 <p className="text-cream-subtle text-sm">
                   {inputText.length} characters {inputText.length >= 100 ? "✓" : "(minimum 100)"}
@@ -138,16 +181,14 @@ export default function GeneratePage() {
                   )}
                 </button>
               </div>
-
               {error && (
                 <div className="mt-4 p-4 bg-error/10 border border-error/30 rounded-lg">
                   <p className="text-error text-sm">{error}</p>
                 </div>
               )}
-
               <div className="mt-6 p-4 bg-amber-muted border border-amber/20 rounded-lg">
                 <p className="text-amber text-sm">
-                  <strong>Pro tip:</strong> Paste at least a full paragraph for best results. The AI works better with more context!
+                  <strong>Pro tip:</strong> Paste at least a full paragraph for best results.
                 </p>
               </div>
             </div>
@@ -162,10 +203,7 @@ export default function GeneratePage() {
               </div>
 
               <div className="flex gap-4 mb-6">
-                <button
-                  onClick={handleSaveDeck}
-                  className="btn-primary px-8 py-3"
-                >
+                <button onClick={handleSaveDeck} className="btn-primary px-8 py-3">
                   Save Deck
                 </button>
                 <Link href="/decks" className="btn-ghost px-8 py-3">
@@ -208,22 +246,15 @@ export default function GeneratePage() {
                     key={index}
                     onClick={() => setCurrentCardIndex(index)}
                     className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentCardIndex
-                        ? "bg-amber w-8"
-                        : "bg-border hover:bg-cream-subtle"
+                      index === currentCardIndex ? "bg-amber w-8" : "bg-border hover:bg-cream-subtle"
                     }`}
-                    aria-label={`Go to card ${index + 1}`}
                   />
                 ))}
               </div>
 
               <div className="flex justify-center">
                 <button
-                  onClick={() => {
-                    setCards([]);
-                    setCurrentCardIndex(0);
-                    setError("");
-                  }}
+                  onClick={() => { setCards([]); setCurrentCardIndex(0); setError(""); }}
                   className="btn-ghost px-8 py-3"
                 >
                   Generate New Set

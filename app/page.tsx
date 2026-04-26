@@ -230,7 +230,7 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <a href="https://ko-fi.com/yourname" target="_blank" rel="noopener noreferrer" className="btn-primary w-full text-center">
+                <a href="https://ko-fi.com/t4nm4y22" target="_blank" rel="noopener noreferrer" className="btn-primary w-full text-center">
                   Unlock Unlimited →
                 </a>
               </div>
@@ -272,7 +272,7 @@ export default function HomePage() {
           <div className="flex items-center gap-6">
             <a href="/privacy" className="hover:text-cream transition-colors">Privacy</a>
             <a href="/terms" className="hover:text-cream transition-colors">Terms</a>
-            <a href="https://ko-fi.com/yourname" target="_blank" rel="noopener noreferrer" className="hover:text-amber transition-colors">☕ Support</a>
+            <a href="https://ko-fi.com/t4nm4y22" target="_blank" rel="noopener noreferrer" className="hover:text-amber transition-colors">☕ Support</a>
           </div>
         </div>
       </footer>

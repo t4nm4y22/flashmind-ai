@@ -76,7 +76,7 @@ export default function Navbar() {
         </button>
       </nav>
 
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"}`}>
+      <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? "max-h-80 opacity-100 pointer-events-auto" : "max-h-0 opacity-0 pointer-events-none"}`}>
         <div className="bg-midnight-light border-t border-border px-5 pb-5 pt-3">
           <ul className="flex flex-col gap-1 mb-4">
             {NAV_LINKS.map((link) => (
